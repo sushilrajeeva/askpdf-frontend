@@ -17,11 +17,17 @@ RUN npm run build
 # Use a lightweight web server (nginx) to serve the built frontend
 FROM nginx:alpine
 
+# Set working directory for Nginx
+WORKDIR /usr/share/nginx/html
+
+# Remove the default Nginx config to avoid conflicts
+RUN rm /etc/nginx/conf.d/default.conf
+
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy built frontend files to Nginx HTML directory
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist .
 
 # Expose the port
 EXPOSE 80
