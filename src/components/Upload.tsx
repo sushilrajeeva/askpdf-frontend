@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { uploadPDF } from "../api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { FileUp } from "lucide-react";
 
 interface UploadProps {
-  onUpload: () => void;  // ✅ Ensure `onUpload` is required
+  onUpload: (doc: { id: number; name: string; url: string }) => void;
 }
 
 export const Upload: React.FC<UploadProps> = ({ onUpload }) => {
@@ -21,8 +20,15 @@ export const Upload: React.FC<UploadProps> = ({ onUpload }) => {
   const handleUpload = async () => {
     if (!file) return alert("Please select a PDF first.");
     try {
-      await uploadPDF(file);
-      onUpload(); // ✅ Call the function to update state in `App.tsx`
+      const response = await uploadPDF(file);
+      const newDoc = { id: Math.random(), name: file.name, url: response.data.url };
+
+      // Store in cache
+      const storedDocs = JSON.parse(localStorage.getItem("uploadedDocuments") || "[]");
+      storedDocs.push(newDoc);
+      localStorage.setItem("uploadedDocuments", JSON.stringify(storedDocs));
+
+      onUpload(newDoc);
     } catch (error) {
       console.error(error);
       alert("Upload failed.");
@@ -30,15 +36,12 @@ export const Upload: React.FC<UploadProps> = ({ onUpload }) => {
   };
 
   return (
-    <Card className="p-6 shadow-lg flex flex-col items-center">
-      <h2 className="text-xl font-bold text-primary mb-4">📤 Upload PDF</h2>
-      <div className="flex items-center gap-4 w-full">
-        <Input type="file" accept="application/pdf" onChange={handleFileChange} className="flex-1" />
-        <Button onClick={handleUpload} variant="outline">
-          <FileUp className="w-5 h-5" />
-          <span className="ml-2">Upload</span>
-        </Button>
-      </div>
-    </Card>
+    <div className="flex items-center space-x-4">
+      <Input type="file" accept="application/pdf" onChange={handleFileChange} className="flex-1" />
+      <Button onClick={handleUpload} variant="outline">
+        <FileUp className="w-5 h-5" />
+        <span className="ml-2">Upload</span>
+      </Button>
+    </div>
   );
 };
