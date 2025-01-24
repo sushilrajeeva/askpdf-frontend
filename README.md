@@ -1,50 +1,62 @@
-# React + TypeScript + Vite
+# AskPDF-AI
+AskPDF-AI is an advanced Generative AI model designed to process PDF documents and provide accurate answers to any questions based on the content within the PDFs. 
+You can ask questions about the PDFs using natural language, and the application will provide relevant responses based on the content of the documents. This app utilizes a language model to generate accurate answers to your queries. Please note that the app will only respond to questions related to the loaded PDFs.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## How It Works
+------------
 
-Currently, two official plugins are available:
+![AskPDF-AI](./docs/PDF-LangChain.jpg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The application follows these steps to provide responses to your questions:
 
-## Expanding the ESLint configuration
+1. PDF Loading: The app reads multiple PDF documents and extracts their text content.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+2. Text Chunking: The extracted text is divided into smaller chunks that can be processed effectively.
 
-- Configure the top-level `parserOptions` property like this:
+3. Language Model: The application utilizes a language model to generate vector representations (embeddings) of the text chunks.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+4. Similarity Matching: When you ask a question, the app compares it with the text chunks and identifies the most semantically similar ones.
+
+5. Response Generation: The selected chunks are passed to the language model, which generates a response based on the relevant content of the PDFs.
+
+## Output
+------------
+![AskPDF-AI Conversation](./docs/AskPDF-AI.png)
+
+## Dependencies and Installation
+----------------------------
+To install the MultiPDF Chat App, please follow these steps:
+
+1. Clone the repository to your local machine.
+
+2. Install the required dependencies by running the following command:
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. Obtain an API key from OpenAI and add it to the `.env` file in the project directory.
+```commandline
+OPENAI_API_KEY=your_secrit_api_key
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Usage
+-----
+To use the MultiPDF Chat App, follow these steps:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. Ensure that you have installed the required dependencies and added the OpenAI API key to the `.env` file.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+2. Run the `main.py` file using the Streamlit CLI. Execute the following command:
+   ```
+   streamlit run app.py
+   ```
+
+3. The application will launch in your default web browser, displaying the user interface.
+
+4. Load multiple PDF documents into the app by following the provided instructions.
+
+5. Ask questions in natural language about the loaded PDFs using the chat interface.
+
+
+## License
+-------
+The AskPDF-AI Chat App is released under the [MIT License](https://opensource.org/licenses/MIT).
