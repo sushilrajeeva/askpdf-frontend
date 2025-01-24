@@ -5,7 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { FileUp } from "lucide-react";
 
-export const Upload: React.FC<{ onUpload: () => void }> = ({ onUpload }) => {
+interface UploadProps {
+  onUpload: () => void;  // ✅ Ensure `onUpload` is required
+}
+
+export const Upload: React.FC<UploadProps> = ({ onUpload }) => {
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +22,7 @@ export const Upload: React.FC<{ onUpload: () => void }> = ({ onUpload }) => {
     if (!file) return alert("Please select a PDF first.");
     try {
       await uploadPDF(file);
-      onUpload(); // Call function to switch to Chat UI
+      onUpload(); // ✅ Call the function to update state in `App.tsx`
     } catch (error) {
       console.error(error);
       alert("Upload failed.");
