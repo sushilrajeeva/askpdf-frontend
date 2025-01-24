@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // No need to import VITE_API_URL, just use relative path
-const API_URL = import.meta.env.VITE_API_URL || "/api"
+const API_URL = "/api";
 
 export const uploadPDF = async (file: File) => {
     const formData = new FormData();
