@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Upload } from "./components/Upload";
 import { Chat } from "./components/Chat";
 import { UploadCloud, Moon, Sun, FileText } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "system");
@@ -50,13 +51,24 @@ const App: React.FC = () => {
       <main className="w-[70%] h-full flex flex-col">
         {/* Section 1: PDF Previews (15% Height) */}
         <div className="h-[15%] flex items-center space-x-4 px-6 overflow-x-auto scrollbar-hide">
-          {documents.map((doc) => (
-            <div key={doc.id} className="relative flex flex-col items-center cursor-pointer">
-              <div className="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                <FileText className="w-8 h-8 text-gray-800 dark:text-gray-200" />
-              </div>
-              <span className="text-sm mt-1 text-gray-600 dark:text-gray-300">Doc {doc.id}</span>
-            </div>
+          {documents.map((doc, index) => (
+            <Popover key={index}>
+              <PopoverTrigger asChild>
+                <div className="relative flex flex-col items-center cursor-pointer">
+                  <div className="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <FileText className="w-8 h-8 text-gray-800 dark:text-gray-200" />
+                  </div>
+                  <span className="text-sm mt-1 text-gray-600 dark:text-gray-300">Doc {index + 1}</span>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-96 h-96 p-2 bg-white dark:bg-gray-800 shadow-lg">
+                <iframe
+                  src={doc.url}
+                  className="w-full h-full rounded-lg"
+                  title={`Preview of ${doc.name}`}
+                ></iframe>
+              </PopoverContent>
+            </Popover>
           ))}
         </div>
 

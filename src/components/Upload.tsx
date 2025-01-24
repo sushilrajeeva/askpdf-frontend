@@ -21,7 +21,14 @@ export const Upload: React.FC<UploadProps> = ({ onUpload }) => {
     if (!file) return alert("Please select a PDF first.");
     try {
       const response = await uploadPDF(file);
-      onUpload({ id: Math.random(), name: file.name, url: response.data.url });
+      const newDoc = { id: Math.random(), name: file.name, url: response.data.url };
+
+      // Store in cache
+      const storedDocs = JSON.parse(localStorage.getItem("uploadedDocuments") || "[]");
+      storedDocs.push(newDoc);
+      localStorage.setItem("uploadedDocuments", JSON.stringify(storedDocs));
+
+      onUpload(newDoc);
     } catch (error) {
       console.error(error);
       alert("Upload failed.");
