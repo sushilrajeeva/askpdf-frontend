@@ -88,7 +88,7 @@ This project is containerized using Docker for easy deployment.
 ### 1. Pull the Frontend Docker Image
 
 ```sh
-npx shadcn-ui@latest add button input
+docker pull sushilrajeev/ask-pdf-frontend:latest  
 ```
 
 ### 2. Run the Frontend Container
@@ -108,7 +108,7 @@ I have implemented a fully automated CI/CD pipeline using GitHub Actions, Docker
 - The previous image is deleted to save space.
 
 
-### 1. CD - Continuous Deployment
+### 2. CD - Continuous Deployment
 
 - Once the image is uploaded, the deployment process is triggered.
 - The latest Docker image is pulled and a new task is deployed on AWS Fargate.
