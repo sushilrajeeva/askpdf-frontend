@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Upload } from "./components/Upload";
 import { Chat } from "./components/Chat";
-import { UploadCloud, Moon, Sun, FileText } from "lucide-react";
+import { UploadCloud, Moon, Sun, FileText, Loader2 } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "system");
   const [documents, setDocuments] = useState<{ id: number; name: string; url: string }[]>([]);
   const [fileUploaded, setFileUploaded] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false); // New state
 
   // Handle theme switching
   const toggleTheme = (mode: string) => {
@@ -18,8 +19,13 @@ const App: React.FC = () => {
   };
 
   const handleUpload = (newDoc: { id: number; name: string; url: string }) => {
-    setDocuments((prev) => [...prev, newDoc]);
-    setFileUploaded(true);
+    setIsProcessing(true); // Start processing loader
+
+    setTimeout(() => {
+      setDocuments((prev) => [...prev, newDoc]);
+      setFileUploaded(true);
+      setIsProcessing(false); // Stop processing loader
+    }, 2000); // Simulating API response delay
   };
 
   return (
@@ -105,16 +111,20 @@ const App: React.FC = () => {
           ))}
         </div>
 
-        {/* Section 2: Chat Window (85% Height) */}
+        {/* Section 2: Chat Window (85% Height) with UploadCloud loader */}
         <div className="h-[85%] flex flex-col overflow-hidden">
-          {fileUploaded ? (
+          {isProcessing ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <Loader2 className="w-12 h-12 text-gray-500 animate-spin mt-4" />
+              <p className="text-gray-500 mt-2">Uploading and processing your document...</p>
+            </div>
+          ) : fileUploaded ? (
             <Chat documents={documents} onUpload={handleUpload} />
           ) : (
             <div className="flex flex-col items-center justify-center h-full">
               <UploadCloud className="w-24 h-24 text-gray-500 animate-pulse" />
               <Upload onUpload={handleUpload} />
-            </div>
-          )}
+            </div>          )}
         </div>
       </main>
     </div>
