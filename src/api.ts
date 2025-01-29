@@ -1,8 +1,7 @@
 import axios from "axios";
 
-// No need to import VITE_API_URL, just use relative path
-const API_URL = "http://localhost:8000/api"; // use this while testing locally
-//const API_URL = "api"; // use this while deploying to production or while in docker
+// Dynamically set API_URL based on environment
+const API_URL = import.meta.env.VITE_API_URL?.trim() || "/api";
 
 export const uploadPDF = async (file: File) => {
     const formData = new FormData();
