@@ -25,14 +25,43 @@ export const Upload: React.FC<UploadProps> = ({ onUpload }) => {
     setIsLoading(true); // Show loader
 
     try {
-      const response = await uploadPDF(file);
-      const newDoc = { id: Math.random(), name: file.name, url: response.data.url };
 
-      // Store in cache
+      // 1. Check if we already have a chatId from a previous session
+      const storedChatId = localStorage.getItem("chatId") || undefined;
+      
+      // 2. Upload the PDF, passing storedChatId if it exists
+      const response = await uploadPDF(file, storedChatId);
+
+      /*
+        The backend returns a JSON like:
+        {
+          "message": "File processed successfully",
+          "num_chunks": 9,
+          "chat_id": "efe245e9-61b8-4f65-b960-c56e118fcdd5"
+        }
+      */
+
+      const { chat_id } = response.data;
+      if (chat_id) {
+        // 3. Store or overwrite the localStorage chatId so we can reuse it
+        localStorage.setItem("chatId", chat_id);
+      }
+
+      // 4. Construct the doc object for the UI (the backend might not return `url`, so we handle that)
+      const newDoc = { 
+        id: Math.random(),
+        name: file.name,
+        // For now, the backend doesn't return a direct URL to the PDF,
+        // so we can just store an empty string or a local objectURL
+        url: response.data.url || URL.createObjectURL(file),
+      };
+
+      // 5. (Optional) Store the document reference in localStorage
       const storedDocs = JSON.parse(localStorage.getItem("uploadedDocuments") || "[]");
       storedDocs.push(newDoc);
       localStorage.setItem("uploadedDocuments", JSON.stringify(storedDocs));
 
+      // Simulate processing delay
       setTimeout(() => {
         setIsLoading(false); // Hide loader when processing completes
         onUpload(newDoc);
