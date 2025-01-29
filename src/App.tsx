@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload } from "./components/Upload";
 import { Chat } from "./components/Chat";
 import { UploadCloud, Moon, Sun, FileText, Loader2 } from "lucide-react";
@@ -9,6 +9,12 @@ const App: React.FC = () => {
   const [documents, setDocuments] = useState<{ id: number; name: string; url: string }[]>([]);
   const [fileUploaded, setFileUploaded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false); // New state
+
+  useEffect(() => {
+    // This effect will run exactly once on component mount
+    // Removing the chat_id forces a new session on every page refresh
+    localStorage.removeItem("chatId");
+  }, []);
 
   // Handle theme switching
   const toggleTheme = (mode: string) => {
