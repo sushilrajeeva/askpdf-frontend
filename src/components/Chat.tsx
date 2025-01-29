@@ -19,22 +19,39 @@ export const Chat: React.FC<ChatProps> = ({ documents, onUpload }) => {
 
   // Auto-scroll to latest message
   useEffect(() => {
-    chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight, behavior: "smooth" });
+    chatContainerRef.current?.scrollTo({ 
+      top: chatContainerRef.current.scrollHeight, 
+      behavior: "smooth" 
+    });
   }, [messages]);
+
+  // Utility to get chatId from localStorage
+  const getChatId = () => localStorage.getItem("chatId") || null;
 
   // Handle sending a question
   const handleSend = async () => {
     if (!question.trim()) return;
 
+    // If there's no chatId, user hasn't uploaded a PDF or lost session
+    const chatId = getChatId();
+    if (!chatId) {
+      alert("No chat session found. Please upload a PDF first.");
+      return;
+    }
+
     setMessages((prev) => [...prev, { sender: "User", text: question }]);
     setIsThinking(true);
 
     try {
-      const res = await askQuestion(question);
+      // Ask the backend, passing the existing chatId
+      const res = await askQuestion(question, chatId);
       setMessages((prev) => [...prev, { sender: "AI", text: res.data.response }]);
     } catch (error) {
       console.error("Error fetching AI response:", error);
-      setMessages((prev) => [...prev, { sender: "AI", text: "⚠️ Error fetching response from AI." }]);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "AI", text: "⚠️ Error fetching response from AI." },
+      ]);
     } finally {
       setIsThinking(false);
     }
@@ -43,7 +60,7 @@ export const Chat: React.FC<ChatProps> = ({ documents, onUpload }) => {
     inputRef.current?.focus(); // Auto-focus input for next question
   };
 
-  // Handle uploading a new document
+  // Allow uploading a new PDF mid-session
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newDoc = {
