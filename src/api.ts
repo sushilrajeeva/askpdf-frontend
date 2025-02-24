@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // Dynamically set API_URL based on environment
-// const API_URL = import.meta.env.VITE_API_URL?.trim() || "/api";
-const API_URL = "/api";
+const API_URL = import.meta.env.VITE_API_URL?.trim();
+// const API_URL = "/api";
 
 export const uploadPDF = async (file: File, chatId?: string) => {
     const formData = new FormData();
